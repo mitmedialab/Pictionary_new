@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background= "@drawable/giraffe_image"
+    tools:context="com.example.ishaangrover.drawing.MainActivity">
+
+
+    <Button
+        android:id="@+id/button_submit"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_gravity="top|center_horizontal"
+        android:background="#72B6EA"
+        android:onClick="submitDrawing"
+        android:text="GUESS!"
+        android:textColor="#ffffff" />
+
+    <view
+        android:id="@+id/single_touch_view"
+        class="com.example.ishaangrover.drawing.DrawingView"
+        android:layout_width="600dp"
+        android:layout_height="600dp"
+        android:layout_gravity="center"
+        android:background="#ffffff" />
+
+</android.support.design.widget.CoordinatorLayout>
