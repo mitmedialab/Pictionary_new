@@ -4,8 +4,12 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -23,26 +27,147 @@ public class MainActivity extends Activity {
 
     private Socket socket;
 
+    // correct, incorrect, erase, done --> bottom
+    Button correct, incorrect, erase, done, letter, number, picture;
+
+    // drawing canvas
+    DrawingView drawingBoard;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        drawingBoard = (DrawingView) findViewById(R.id.single_touch_view);
+
+        drawButtons();
+        //setSubmitButton();
+        setButtons(); // You can fill inside this method
+    }
+
+    public void drawButtons() {
+        correct = new Button(this);
+        incorrect = new Button(this);
+        erase = new Button(this);
+        done = new Button(this);
+        letter = new Button(this);
+        number = new Button(this);
+        picture = new Button(this);
+
+        // set text inside buttons
+        correct.setText("Correct");
+        incorrect.setText("Incorrect");
+        erase.setText("Start Over");
+        done.setText("Done");
+        letter.setText("Letter");
+        number.setText("Number");
+        picture.setText("Picture");
+
+        // set font size
+        correct.setTextSize(30);
+        incorrect.setTextSize(30);
+        erase.setTextSize(30);
+        done.setTextSize(30);
+        letter.setTextSize(38);
+        number.setTextSize(38);
+        picture.setTextSize(38);
+
+        // set layouts
+        LinearLayout bottomButtons = new LinearLayout(this.getApplicationContext());
+        bottomButtons.setOrientation(LinearLayout.HORIZONTAL);
+
+        LinearLayout topButtons = new LinearLayout(this.getApplicationContext());
+        topButtons.setOrientation(LinearLayout.HORIZONTAL);
+
+        LinearLayout.LayoutParams topLp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+        LinearLayout.LayoutParams bottomLp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+        bottomLp.gravity =  Gravity.BOTTOM;
+
+        LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        lp2.weight = 1;
+
+        bottomButtons.addView(correct, lp2);
+        bottomButtons.addView(incorrect, lp2);
+        bottomButtons.addView(erase, lp2);
+        bottomButtons.addView(done, lp2);
+        bottomButtons.setGravity(Gravity.BOTTOM);
+        bottomButtons.setPadding(0, 0, 0, 100);
+
+        topButtons.addView(letter, lp2);
+        topButtons.addView(number, lp2);
+        topButtons.addView(picture, lp2);
+        topButtons.setPadding(0, 100, 0, 0);
+
+        this.addContentView(topButtons, topLp);
+        this.addContentView(bottomButtons, bottomLp);
+    }
+
+    public void setSubmitButton() {
+        // submit button?
         Button submit_button = (Button) findViewById(R.id.button_submit);
         submit_button.setOnClickListener( new View.OnClickListener() {
             public void onClick(View view) {
-                DrawingView drawingBoard = (DrawingView) findViewById(R.id.single_touch_view);
+                //drawingBoard = (DrawingView) findViewById(R.id.single_touch_view);
                 drawing = drawingBoard.getDrawing();
 
                 if (!connected) {
                     Thread cThread = new Thread(new ClientThread());
                     cThread.start();
                 }
-
-
-
             }
         });
+    }
+
+    public void setButtons() {
+        correct.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Log.d("test", "correct clicked");
+            }}
+        );
+
+        incorrect.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Log.d("test", "incorrect clicked");
+            }}
+        );
+
+        erase.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Log.d("test", "erase clicked");
+                drawingBoard.clearCanvas();
+            }}
+        );
+
+        done.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Log.d("test", "done clicked");
+                drawingBoard = (DrawingView) findViewById(R.id.single_touch_view);
+                drawing = drawingBoard.getDrawing();
+
+                if (!connected) {
+                    Thread cThread = new Thread(new ClientThread());
+                    cThread.start();
+                }
+            }}
+        );
+
+        letter.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Log.d("test", "letter clicked");
+            }}
+        );
+
+        number.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Log.d("test", "number clicked");
+            }}
+        );
+
+        picture.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Log.d("test", "picture clicked");
+            }}
+        );
     }
 
     public class ClientThread implements Runnable {
