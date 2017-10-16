@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.media.ThumbnailUtils;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -32,6 +33,8 @@ public class DrawingView extends View {
     Context context;
     private Paint circlePaint;
     private Path circlePath;
+
+    int bitmapW, bitmapH;
 
 
     public DrawingView(Context c, AttributeSet attrs) {
@@ -66,6 +69,8 @@ public class DrawingView extends View {
         super.onSizeChanged(w, h, oldw, oldh);
 
         mBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        bitmapW = w;
+        bitmapH = h;
         mCanvas = new Canvas(mBitmap);
     }
 
@@ -130,10 +135,28 @@ public class DrawingView extends View {
         return true;
     }
 
+    public static Bitmap getBitmapFromView(View view) {
+        //Define a bitmap with the same size as the view
+        Bitmap returnedBitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(),Bitmap.Config.ARGB_8888);
+        //Bind a canvas to it
+        Canvas canvas = new Canvas(returnedBitmap);
+        //Get the view's background
+        Drawable bgDrawable = view.getBackground();
+        if (bgDrawable!=null)
+            //has background drawable, then draw it on the canvas
+            bgDrawable.draw(canvas);
+        else
+            //does not have background drawable, then draw white background on the canvas
+            canvas.drawColor(Color.WHITE);
+        // draw the view on the canvas
+        view.draw(canvas);
+        //return the bitmap
+        return returnedBitmap;
+    }
 
     public byte[] getDrawing()
     {
-        Bitmap whatTheUserDrewBitmap = getDrawingCache();
+        Bitmap whatTheUserDrewBitmap = getBitmapFromView(this);//getDrawingCache(true);
         // don't forget to clear it (see above) or you just get duplicates
 
         // almost always you will want to reduce res from the very high screen res
@@ -146,6 +169,8 @@ public class DrawingView extends View {
         // these days you often need a "byte array". for example,
         // to save to parse.com or other cloud services
 
+        //setDrawingCacheEnabled(false);
+        //setDrawingCacheEnabled(true);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         whatTheUserDrewBitmap.compress(Bitmap.CompressFormat.PNG, 0, baos);
@@ -168,6 +193,12 @@ public class DrawingView extends View {
     public void clearCanvas() {
         mCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
         invalidate();
+
+        mBitmap.recycle();
+        mBitmap = null;
+        mBitmap = Bitmap.createBitmap(bitmapW, bitmapH, Bitmap.Config.ARGB_8888);
+        mCanvas = new Canvas(mBitmap);
+        Log.d("drawingview", "clear canvas");
     }
 
     public void writeFile(byte[] data, String fileName) throws IOException {

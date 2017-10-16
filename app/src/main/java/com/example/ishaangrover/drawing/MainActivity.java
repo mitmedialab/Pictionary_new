@@ -19,7 +19,7 @@ import java.net.Socket;
 public class MainActivity extends Activity {
     byte[] drawing;
 
-    private String serverIpAddress = "192.168.1.187";
+    private String serverIpAddress = "192.168.1.241";// "192.168.1.187";
 
     private boolean connected = false;
 
@@ -108,12 +108,12 @@ public class MainActivity extends Activity {
         submit_button.setOnClickListener( new View.OnClickListener() {
             public void onClick(View view) {
                 //drawingBoard = (DrawingView) findViewById(R.id.single_touch_view);
-                drawing = drawingBoard.getDrawing();
+                //drawing = drawingBoard.getDrawing();
 
-                if (!connected) {
-                    Thread cThread = new Thread(new ClientThread());
-                    cThread.start();
-                }
+                //if (!connected) {
+                //    Thread cThread = new Thread(new ClientThread());
+                //    cThread.start();
+               // }
             }
         });
     }
